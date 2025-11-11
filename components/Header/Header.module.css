@@ -1,7 +1,4 @@
 .header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -27,6 +24,7 @@
     padding: 0;
     display: flex;
     gap: 1rem;
+    align-items: center;
 }
 
 .navigation li a {

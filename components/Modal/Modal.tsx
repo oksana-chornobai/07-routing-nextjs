@@ -1,46 +1,42 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import css from './Modal.module.css';
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
-  children: React.ReactNode;
   onClose: () => void;
+  children: React.ReactNode;
 }
 
-export default function Modal({ children, onClose }: ModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
-
+export default function Modal({ onClose, children }: ModalProps) {
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+    // Close modal on Escape key press
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         onClose();
       }
     };
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('keydown', handleEscape);
-
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = originalOverflow;
+      document.body.style.overflow = 'auto';
     };
   }, [onClose]);
+  // Close modal on backdrop click
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
 
   return createPortal(
-    <div className={css.backdrop} role="dialog" aria-modal="true">
-      <div className={css.modal} ref={modalRef}>
+    <div
+      className={css.backdrop}
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className={css.modal} onClick={e => e.stopPropagation()}>
         {children}
       </div>
     </div>,
