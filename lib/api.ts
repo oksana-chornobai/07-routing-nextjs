@@ -14,6 +14,7 @@ export interface FetchNotesParams {
   page: number;
   search: string;
   perPage?: number;
+  tag?: string;
 }
 
 export interface FetchNotesResponse {
